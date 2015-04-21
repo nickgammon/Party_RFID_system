@@ -155,7 +155,8 @@ void listAllCards ()
   Serial.println (F("-----------------"));
   Serial.println (F("LISTING ALL CARDS"));
   
-  if (cards < 0)
+  // number of cards should be in believable range
+  if (cards < 0 || cards > (E2END + 1 - FIRST_CARD) / sizeof (userCode))
     {
     corrupt = true;
     Serial.println (F("EEPROM not initialized."));
@@ -433,7 +434,44 @@ void processNewCard ()
   listAllCards ();  // debugging
   }  // end of processNewCard
   
-
+void warningPresentCard ()
+  {
+  static unsigned long lastBeep;
+  if (state == STATE_ADD_CARD || 
+      state == STATE_ADD_BACKUP_CARD ||
+      state == STATE_DELETE_CARD ||
+      state == STATE_PASS_OUT)
+    {
+    if (millis () - lastBeep >= TIME_BETWEEN_WARNINGS)  
+      {
+      waiting ();
+      // two beeps means we want the main card
+      if (state == STATE_ADD_CARD)
+        {
+        delay (200);
+        waiting ();
+        }
+      lastBeep = millis ();
+      }  // end if
+    }  // end of waiting for a card    
+  }  // end of warningPresentCard
+  
+void warningCorrupt ()
+  {
+  // do a warning beep if EEPROM corrupt
+  static unsigned long lastWarning;
+  if (corrupt)
+    {
+    if (millis () - lastWarning >= TIME_BETWEEN_WARNINGS)  
+      {
+      corruptWarning ();
+      lastWarning = millis ();
+      flashLED (LED_ERROR);  // error
+      }  // end if
+    }  // end of corrupt EEPROM
+    
+  }  // end of warningCorrupt
+  
 void loop()
   {
   // if serial data available, process it
@@ -448,39 +486,13 @@ void loop()
   manageLEDs ();
 
   // do a warning beep to remind them to present a card
-  static unsigned long lastBeep;
-  if (state == STATE_ADD_CARD || 
-     state == STATE_ADD_BACKUP_CARD ||
-     state == STATE_DELETE_CARD ||
-     state == STATE_PASS_OUT)
-    {
-    if (millis () - lastBeep >= TIME_BETWEEN_WARNINGS)  
-      {
-      waiting ();
-      // two beeps means we want the main card
-      if (state == STATE_ADD_CARD)
-        {
-        delay (200);
-        waiting ();
-        }
-      lastBeep = millis ();
-      }  // end if
-    }  // end of waiting for backup card
+  warningPresentCard ();
 
   // relock door if time up    
   if (DOORLOCK != NOT_USED && millis () - timeDoorUnlocked >= UNLOCK_TIME)
     digitalWrite (DOORLOCK, LOW);   // lock door again
 
+  warningCorrupt ();
   
-  // do a warning beep if EEPROM corrupt
-  static unsigned long lastWarning;
-  if (corrupt)
-    {
-    if (millis () - lastWarning >= TIME_BETWEEN_WARNINGS)  
-      {
-      corruptWarning ();
-      lastWarning = millis ();
-      }  // end if
-    }  // end of waiting for backup card
 
   }  // end of loop
