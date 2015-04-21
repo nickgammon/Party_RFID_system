@@ -1,0 +1,78 @@
+// CONFIGURATION
+
+// ARDUINO PINS
+
+// which pins the LEDs are on (use NOT_USED for none)
+
+const int LED_pins [] = 
+    {
+    2,  // STATE_EVENT_ACTIVE,
+    3,  // STATE_ADMIN,
+    4,  // STATE_ADD_CARD,
+    5,  // STATE_ADD_BACKUP_CARD,
+    6,  // STATE_PASS_OUT,
+    7,  // STATE_DELETE_CARD,
+    A0, // LED_ACTION_ACCEPTED
+    A1, // LED_ALREADY_THERE
+    A2, // LED_ERROR
+    };
+
+// active HIGH to unlock the door
+const int DOORLOCK = A3;    // NOT_USED if no door lock
+       
+// speaker through suitable resistor (eg. 100 ohms)       
+const int SPEAKER = 8;      // NOT_USED if no speaker
+
+// what pin the RFID board is connected to, if using SoftwareSerial
+const byte RFID_PIN = 9;
+
+// how long to leave the door unlocked in milliseconds
+const unsigned long UNLOCK_TIME = 4000;   // milliseconds
+
+// chip select pin for the SD card
+const byte SD_CHIP_SELECT = 10;
+
+// Make true, recompile and upload quickly to set the clock chip to the compile time.
+// Then make false, recompile and upload again, or it will keep resetting the clock
+// to the last compile time every time you turn it on.
+const boolean ADJUST_TIME = false;
+
+// whether to use hardware or software serial
+#define USE_SOFTWARE_SERIAL true
+
+// if using SoftwareSerial - the baud rate for the RFID reader
+// if using HardwareSerial - the baud rate for the RFID reader *and* debugging
+const unsigned long RFID_BAUD_RATE = 19200;
+
+// baud rate for HardwareSerial (debugging) if using SoftwareSerial, otherwise not used
+const unsigned long MAIN_BAUD_RATE = 115200;
+
+// whether to allow only one entry without a pass-out
+#define ONE_ENTRY_ONLY true
+
+// whether to use ID12 style or HZ-1050 style
+#define USE_ID12 false
+
+// whether to use a Real Time Clock or not
+#define USE_RTC true
+
+// whether to use an SD card for logging or not
+#define USE_SD true
+
+// how long the LEDs flash for (mS)
+const unsigned long FLASH_TIME = 200;
+
+// how many times to flash the LEDs
+const byte NUMBER_OF_FLASHES = 3;
+
+// time between short beeps to warn you to present backup card
+const unsigned long TIME_BETWEEN_WARNINGS = 1500;
+
+// card codes
+const unsigned long MASTER_ADMIN_CARD       = 0xED48B3;
+const unsigned long MASTER_ADD_CODE_CARD    = 0xCC1FB2;
+const unsigned long MASTER_ERASE_ALL_CARD   = 0x27FE19;
+const unsigned long MASTER_BEGIN_EVENT_CARD = 0x32C52A;
+const unsigned long MASTER_DELETE_CODE_CARD = 0x995A20;
+const unsigned long MASTER_PASS_OUT_CARD    = 0x421C2F;
+

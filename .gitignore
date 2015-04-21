@@ -1,0 +1,8 @@
+.*
+*~
+!.gitignore
+!.gitattributes
+
+# leave user's configuration alone
+Configuration.h
+
