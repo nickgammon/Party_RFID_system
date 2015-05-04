@@ -34,6 +34,9 @@ Date:   15 April 2015
  
 */
 
+const char Version [] = "1.01";
+
+
 const int NOT_USED = -1;
 
 #include "Configuration.h"
@@ -81,6 +84,11 @@ typedef enum userState {
   } userState;
 
 const unsigned long TIMEOUT = 300;  // mS
+
+// stringification for Arduino IDE version
+#define xstr(s) str(s)
+#define str(s) #s
+
 
 // RFID reader
 #if USE_SOFTWARE_SERIAL
@@ -195,7 +203,14 @@ void setup()
   Serial.begin (RFID_BAUD_RATE);      // disconnect RFID reader to upload sketches
 #endif 
 
-  Serial.println (F("Start door entry system."));
+  while (!Serial) ;  // for Leonardo, Micro etc.
+
+  Serial.println ();
+  Serial.println (F("RFID access control system."));
+  Serial.println (F("Written by Nick Gammon."));
+  Serial.print   (F("Version "));
+  Serial.println (Version);
+  Serial.println (F("Compiled on " __DATE__ " at " __TIME__ " with Arduino IDE " xstr(ARDUINO) "."));
  
   if (SPEAKER != NOT_USED)
     tone1.begin(SPEAKER);
@@ -431,7 +446,7 @@ void processNewCard ()
          break;
     }  // end of switch
     
-  listAllCards ();  // debugging
+//  listAllCards ();  // debugging
   }  // end of processNewCard
   
 void warningPresentCard ()
